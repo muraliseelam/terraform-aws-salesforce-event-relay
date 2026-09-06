@@ -1,8 +1,12 @@
 # Salesforce Event Relay on AWS
 
+[![Terraform module](https://github.com/muraliseelam/terraform-aws-salesforce-event-relay/actions/workflows/terraform.yml/badge.svg)](https://github.com/muraliseelam/terraform-aws-salesforce-event-relay/actions/workflows/terraform.yml)
+
 Production-oriented Terraform module for receiving Salesforce Platform Events and Change Data Capture (CDC) events through the native Salesforce Event Relay integration with Amazon EventBridge.
 
 The module associates a Salesforce partner event source, filters events, delivers them to an encrypted durable queue, preserves failures in separate dead-letter queues, archives events for replay, and creates operational metrics and alarms.
+
+> **Preview:** Version 0.x should be validated with a non-production Salesforce org before production adoption.
 
 ```mermaid
 flowchart LR
@@ -42,7 +46,7 @@ See [Salesforce setup](docs/salesforce-setup.md) for the required sequence.
 ```hcl
 module "salesforce_event_relay" {
   source  = "app.terraform.io/Murali_Seelam/salesforce-event-relay/aws"
-  version = "1.0.0"
+  version = "0.1.0"
 
   partner_event_source_name_prefix = "aws.partner/salesforce.com/00Dxxxxxxxxxxxxxxx/0YLxxxxxxxxxxxxxxx"
   name                             = "customer-cdc"
@@ -176,7 +180,7 @@ The dashboard and stable metric dimensions make actual adoption and reliability 
 1. Put this module in a VCS repository named `terraform-aws-salesforce-event-relay`.
 2. Connect that VCS provider to the `Murali_Seelam` HCP Terraform organization.
 3. Add the repository as a private module.
-4. Create semantic-version tags such as `v1.0.0`; HCP Terraform publishes a module version for each valid tag.
+4. Create semantic-version tags such as `v0.1.0`; HCP Terraform publishes a module version for each valid tag.
 
 Do not tag `v1.0.0` until CI passes and a non-production Salesforce relay has delivered a representative test event.
 
