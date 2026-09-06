@@ -2,14 +2,14 @@
 
 This document is an engineering evidence plan, not immigration legal advice. Review any EB-1A strategy with qualified counsel.
 
-A module existing in a private registry is proof of implementation, not proof that a contribution has major significance. Stronger evidence connects authorship to independent adoption and measurable outcomes.
+A module existing in a public registry is proof of implementation and availability, not proof that a contribution has major significance. Stronger evidence connects authorship to independent adoption and measurable outcomes.
 
 ## Evidence the project can produce
 
 | Question | Objective artifact |
 |---|---|
 | Who designed and maintained it? | Git history, reviewed pull requests, release notes, architecture decisions, and signed release tags |
-| Was it adopted? | HCP Terraform consumer workspaces, organization-approved deployment records, and independent teams using pinned versions |
+| Was it adopted? | Public registry download counts, GitHub traffic, external consumer workspaces, deployment records, and independent teams using pinned versions |
 | Did it solve an important problem? | Before/after integration lead time, incident rate, recovery time, throughput, and cost |
 | Was it reliable at meaningful scale? | CloudWatch aggregate metrics for matched events, processed events, backlog age, failures, and replay volume |
 | Did others recognize the work? | Specific letters from independent users or leaders, conference invitations, technical reviews, and citations |

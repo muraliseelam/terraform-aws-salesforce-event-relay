@@ -2,6 +2,13 @@
 
 All notable changes follow [Semantic Versioning](https://semver.org/).
 
+## [0.1.1] - 2026-09-06
+
+### Changed
+
+- Made the Terraform public registry the primary installation source.
+- Clarified that the HCP Terraform private registry is only an optional internal mirror.
+
 ## [0.1.0] - 2026-09-06
 
 ### Added

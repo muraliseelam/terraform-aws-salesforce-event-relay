@@ -1,6 +1,7 @@
 # Salesforce Event Relay on AWS
 
 [![Terraform module](https://github.com/muraliseelam/terraform-aws-salesforce-event-relay/actions/workflows/terraform.yml/badge.svg)](https://github.com/muraliseelam/terraform-aws-salesforce-event-relay/actions/workflows/terraform.yml)
+[![Terraform Registry](https://img.shields.io/badge/Terraform%20Registry-public-844FBA)](https://registry.terraform.io/modules/muraliseelam/salesforce-event-relay/aws/latest)
 
 Production-oriented Terraform module for receiving Salesforce Platform Events and Change Data Capture (CDC) events through the native Salesforce Event Relay integration with Amazon EventBridge.
 
@@ -45,8 +46,8 @@ See [Salesforce setup](docs/salesforce-setup.md) for the required sequence.
 
 ```hcl
 module "salesforce_event_relay" {
-  source  = "app.terraform.io/Murali_Seelam/salesforce-event-relay/aws"
-  version = "0.1.0"
+  source  = "muraliseelam/salesforce-event-relay/aws"
+  version = "0.1.1"
 
   partner_event_source_name_prefix = "aws.partner/salesforce.com/00Dxxxxxxxxxxxxxxx/0YLxxxxxxxxxxxxxxx"
   name                             = "customer-cdc"
@@ -127,7 +128,7 @@ The archive intentionally retains all events from the dedicated Salesforce partn
 
 ## Evidence of real impact
 
-The dashboard and stable metric dimensions make actual adoption and reliability measurable. A private registry entry by itself does not establish major significance. Preserve truthful release history, consumer adoption, throughput, reliability improvement, independent testimonials, and public technical authorship where permitted. See [measuring impact](docs/impact-measurement.md).
+The dashboard and stable metric dimensions make actual adoption and reliability measurable. A public registry entry by itself does not establish major significance. Preserve truthful release history, external adoption, registry downloads, throughput, reliability improvement, independent testimonials, and public technical authorship where permitted. See [measuring impact](docs/impact-measurement.md).
 
 ## Examples
 
@@ -175,12 +176,14 @@ The dashboard and stable metric dimensions make actual adoption and reliability 
 | `dashboard_name` | CloudWatch dashboard name, if enabled |
 | `metric_dimensions` | Stable dimensions for impact and reliability queries |
 
-## Publishing to the private registry
+## Public availability
 
-1. Put this module in a VCS repository named `terraform-aws-salesforce-event-relay`.
-2. Connect that VCS provider to the `Murali_Seelam` HCP Terraform organization.
-3. Add the repository as a private module.
-4. Create semantic-version tags such as `v0.1.0`; HCP Terraform publishes a module version for each valid tag.
+The module is publicly available from:
+
+- [Terraform Registry](https://registry.terraform.io/modules/muraliseelam/salesforce-event-relay/aws/latest), using `source = "muraliseelam/salesforce-event-relay/aws"`;
+- [GitHub](https://github.com/muraliseelam/terraform-aws-salesforce-event-relay), including source, issues, releases, and contribution history.
+
+No HCP Terraform organization membership or API token is required to download the public module. New versions are published automatically when a semantic-version tag is pushed to GitHub. The HCP Terraform private-registry copy is only an optional internal mirror.
 
 Do not tag `v1.0.0` until CI passes and a non-production Salesforce relay has delivered a representative test event.
 
