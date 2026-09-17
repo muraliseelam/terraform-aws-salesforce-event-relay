@@ -47,7 +47,7 @@ See [Salesforce setup](docs/salesforce-setup.md) for the required sequence.
 ```hcl
 module "salesforce_event_relay" {
   source  = "muraliseelam/salesforce-event-relay/aws"
-  version = "0.1.1"
+  version = "0.1.2"
 
   partner_event_source_name_prefix = "aws.partner/salesforce.com/00Dxxxxxxxxxxxxxxx/0YLxxxxxxxxxxxxxxx"
   name                             = "customer-cdc"
@@ -186,6 +186,16 @@ The module is publicly available from:
 No HCP Terraform organization membership or API token is required to download the public module. New versions are published automatically when a semantic-version tag is pushed to GitHub. The HCP Terraform private-registry copy is only an optional internal mirror.
 
 Do not tag `v1.0.0` until CI passes and a non-production Salesforce relay has delivered a representative test event.
+
+## Limitations and known gaps
+
+- Version 0.x is a preview. The native tests run against a mocked AWS provider and do not create resources. The maintainer has not yet recorded an end-to-end run against a live Salesforce org and AWS account in this repository; do that in a non-production org before relying on the module.
+- The module manages only the AWS side. Salesforce Event Relay configuration, named credentials, channel membership, and downstream consumers remain the caller's responsibility.
+- Each module instance handles exactly one Salesforce partner event source, and `partner_event_source_name_prefix` must match exactly one source in the deploying account and region.
+- Existing-bus mode assumes the partner bus keeps the partner source name, as AWS creates it, in the same account and region.
+- The default archive retains every event on the partner bus for 30 days. Set `archive_event_pattern` or a shorter retention if that volume or data classification is not acceptable.
+- Alarms notify nobody unless `alarm_actions` is set.
+- Throughput, latency, and cost have not been measured by the maintainer. The dashboard exposes the CloudWatch metrics needed to measure them in your own account.
 
 ## License
 
