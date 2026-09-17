@@ -33,3 +33,35 @@ jobs:
 
       - name: Run native tests
         run: terraform test
+
+      - name: Validate examples
+        run: |
+          for example in examples/*/; do
+            echo "== ${example}"
+            terraform -chdir="${example}" init -backend=false -input=false
+            terraform -chdir="${example}" validate
+          done
+
+  lint:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+
+      - name: Set up TFLint
+        uses: terraform-linters/setup-tflint@1cf010d3c7aef302051ccdb68c14c5dc2efa34ef # v6.3.1
+        with:
+          tflint_version: v0.64.0
+
+      - name: Initialize TFLint plugins
+        run: tflint --init
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+
+      - name: Lint module and examples
+        run: |
+          for dir in . examples/*/; do
+            echo "== ${dir}"
+            tflint --chdir="${dir}" --config="${GITHUB_WORKSPACE}/.tflint.hcl" --format compact
+          done
