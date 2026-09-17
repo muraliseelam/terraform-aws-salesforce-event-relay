@@ -1,5 +1,5 @@
 output "event_bus" {
-  description = "EventBridge partner event bus receiving Salesforce events."
+  description = "Existing EventBridge partner event bus derived from the active Salesforce source."
   value       = module.salesforce_event_relay.event_bus
 }
 
@@ -11,9 +11,4 @@ output "event_queue" {
 output "consumer_iam_policy_json" {
   description = "Least-privilege IAM policy document for a queue consumer."
   value       = module.salesforce_event_relay.consumer_iam_policy_json
-}
-
-output "dashboard_name" {
-  description = "Name of the CloudWatch operations dashboard."
-  value       = module.salesforce_event_relay.dashboard_name
 }
