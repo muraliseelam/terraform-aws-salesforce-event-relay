@@ -231,3 +231,135 @@ run "reject_short_processing_dlq_retention" {
 
   expect_failures = [aws_sqs_queue.events]
 }
+
+run "security_invariants" {
+  command = apply
+
+  variables {
+    partner_event_source_name_prefix = "aws.partner/salesforce.com/00D000000000000AAA/0YL000000000000AAA"
+  }
+
+  assert {
+    condition = alltrue([
+      for queue in [aws_sqs_queue.events, aws_sqs_queue.delivery_dlq, aws_sqs_queue.processing_dlq] :
+      queue.sqs_managed_sse_enabled && queue.tags["ManagedBy"] == "Terraform"
+    ])
+    error_message = "Every queue must use SQS-managed encryption and carry the ManagedBy tag."
+  }
+
+  assert {
+    condition = alltrue([
+      for document in [
+        data.aws_iam_policy_document.events_queue,
+        data.aws_iam_policy_document.delivery_dlq,
+        data.aws_iam_policy_document.processing_dlq
+      ] :
+      document.statement[0].sid == "DenyInsecureTransport" &&
+      document.statement[0].effect == "Deny" &&
+      document.statement[0].actions == toset(["sqs:*"]) &&
+      length(document.statement[0].condition) == 1 &&
+      one(document.statement[0].condition).test == "Bool" &&
+      one(document.statement[0].condition).variable == "aws:SecureTransport" &&
+      one(document.statement[0].condition).values == tolist(["false"])
+    ])
+    error_message = "Every queue policy must start with a statement denying non-TLS access."
+  }
+
+  assert {
+    condition = alltrue([
+      for document in [data.aws_iam_policy_document.events_queue, data.aws_iam_policy_document.delivery_dlq] :
+      length(document.statement) == 2 &&
+      document.statement[1].effect == "Allow" &&
+      document.statement[1].actions == toset(["sqs:SendMessage"]) &&
+      length(document.statement[1].principals) == 1 &&
+      one(document.statement[1].principals).type == "Service" &&
+      one(document.statement[1].principals).identifiers == toset(["events.amazonaws.com"]) &&
+      length(document.statement[1].condition) == 2 &&
+      anytrue([
+        for condition in document.statement[1].condition :
+        condition.test == "ArnEquals" &&
+        condition.variable == "aws:SourceArn" &&
+        condition.values == tolist([aws_cloudwatch_event_rule.salesforce.arn])
+      ]) &&
+      anytrue([
+        for condition in document.statement[1].condition :
+        condition.test == "StringEquals" &&
+        condition.variable == "aws:SourceAccount" &&
+        condition.values == tolist(["123456789012"])
+      ])
+    ])
+    error_message = "EventBridge may send messages only from the managed rule in the deploying account."
+  }
+
+  assert {
+    condition     = length(data.aws_iam_policy_document.processing_dlq.statement) == 1
+    error_message = "The processing DLQ must not grant any producer access; only SQS redrive writes to it."
+  }
+
+  assert {
+    condition = (
+      length(data.aws_iam_policy_document.consumer.statement) == 1 &&
+      length(data.aws_iam_policy_document.consumer.statement[0].principals) == 0 &&
+      data.aws_iam_policy_document.consumer.statement[0].actions == toset([
+        "sqs:ChangeMessageVisibility",
+        "sqs:DeleteMessage",
+        "sqs:GetQueueAttributes",
+        "sqs:GetQueueUrl",
+        "sqs:ReceiveMessage"
+      ]) &&
+      data.aws_iam_policy_document.consumer.statement[0].resources == toset([aws_sqs_queue.events.arn])
+    )
+    error_message = "The consumer policy must grant only receive, delete, visibility, and attribute actions on the main queue."
+  }
+
+  assert {
+    condition = (
+      jsondecode(aws_sqs_queue_redrive_allow_policy.processing_dlq.redrive_allow_policy).redrivePermission == "byQueue" &&
+      jsondecode(aws_sqs_queue_redrive_allow_policy.processing_dlq.redrive_allow_policy).sourceQueueArns == [aws_sqs_queue.events.arn]
+    )
+    error_message = "Only the main queue may redrive into the processing DLQ."
+  }
+
+  assert {
+    condition     = aws_sqs_queue.delivery_dlq.message_retention_seconds == 1209600
+    error_message = "The delivery DLQ must retain undeliverable events for the SQS maximum of 14 days."
+  }
+
+  assert {
+    condition     = aws_cloudwatch_event_rule.salesforce.state == "ENABLED" && aws_cloudwatch_event_rule.salesforce.event_bus_name == "aws.partner/salesforce.com/00D000000000000AAA/0YL000000000000AAA"
+    error_message = "The routing rule must be enabled on the Salesforce partner bus."
+  }
+}
+
+run "reject_invalid_name" {
+  command = plan
+
+  variables {
+    partner_event_source_name_prefix = "aws.partner/salesforce.com/00D000000000000AAA/0YL000000000000AAA"
+    name                             = "bad name!"
+  }
+
+  expect_failures = [var.name]
+}
+
+run "reject_invalid_event_pattern" {
+  command = plan
+
+  variables {
+    partner_event_source_name_prefix = "aws.partner/salesforce.com/00D000000000000AAA/0YL000000000000AAA"
+    event_pattern                    = "not-json"
+  }
+
+  expect_failures = [var.event_pattern]
+}
+
+run "reject_non_arn_alarm_action" {
+  command = plan
+
+  variables {
+    partner_event_source_name_prefix = "aws.partner/salesforce.com/00D000000000000AAA/0YL000000000000AAA"
+    alarm_actions                    = ["platform-alerts"]
+  }
+
+  expect_failures = [var.alarm_actions]
+}
