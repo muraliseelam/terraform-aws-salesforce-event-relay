@@ -2,6 +2,16 @@
 
 All notable changes follow [Semantic Versioning](https://semver.org/).
 
+## [Unreleased]
+
+### Added
+
+- A validation record template and a step in the setup sequence for recording a live run, so the evidence `CONTRIBUTING.md` requires before `v1.0.0` is captured in one pass.
+
+### Changed
+
+- The native tests use the documented placeholder source name instead of identifiers shaped like real Salesforce org and relay IDs.
+
 ## [0.1.2] - 2026-09-17
 
 ### Added

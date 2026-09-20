@@ -49,3 +49,9 @@ Return to Salesforce and start the Event Relay. Publish a non-sensitive test eve
 4. Both DLQs remain empty.
 
 AWS also documents the integration in [Receiving events from Salesforce in Amazon EventBridge](https://docs.aws.amazon.com/eventbridge/latest/userguide/eb-saas-salesforce.html).
+
+## 6. Record the run
+
+`CONTRIBUTING.md` holds `v1.0.0` until a non-production relay has delivered a representative event through the module and the result is recorded in this repository. Step 5 confirms delivery once; this step turns that confirmation into evidence a reader can check.
+
+Copy the [validation record template](validation-record-template.md) to `docs/validation-YYYY-MM-DD.md`, fill it in while the run is still in front of you, redact the identifiers it lists, and commit it with a `docs:` message. Record what failed or went unmeasured as carefully as what worked.
