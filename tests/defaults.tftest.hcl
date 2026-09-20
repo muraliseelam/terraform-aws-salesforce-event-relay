@@ -26,9 +26,9 @@ mock_provider "aws" {
 
   mock_data "aws_cloudwatch_event_source" {
     defaults = {
-      arn        = "arn:aws:events:us-east-1:123456789012:event-source/aws.partner/salesforce.com/00D000000000000AAA/0YL000000000000AAA"
+      arn        = "arn:aws:events:us-east-1:123456789012:event-source/aws.partner/salesforce.com/00Dxxxxxxxxxxxxxxx/0YLxxxxxxxxxxxxxxx"
       created_by = "salesforce.com"
-      name       = "aws.partner/salesforce.com/00D000000000000AAA/0YL000000000000AAA"
+      name       = "aws.partner/salesforce.com/00Dxxxxxxxxxxxxxxx/0YLxxxxxxxxxxxxxxx"
       state      = "PENDING"
     }
   }
@@ -42,13 +42,13 @@ mock_provider "aws" {
 
   mock_resource "aws_cloudwatch_event_bus" {
     defaults = {
-      arn = "arn:aws:events:us-east-1:123456789012:event-bus/aws.partner/salesforce.com/00D000000000000AAA/0YL000000000000AAA"
+      arn = "arn:aws:events:us-east-1:123456789012:event-bus/aws.partner/salesforce.com/00Dxxxxxxxxxxxxxxx/0YLxxxxxxxxxxxxxxx"
     }
   }
 
   mock_resource "aws_cloudwatch_event_rule" {
     defaults = {
-      arn = "arn:aws:events:us-east-1:123456789012:rule/aws.partner/salesforce.com/00D000000000000AAA/0YL000000000000AAA/sf-event-relay-route"
+      arn = "arn:aws:events:us-east-1:123456789012:rule/aws.partner/salesforce.com/00Dxxxxxxxxxxxxxxx/0YLxxxxxxxxxxxxxxx/sf-event-relay-route"
     }
   }
 
@@ -65,7 +65,7 @@ run "secure_defaults" {
   command = apply
 
   variables {
-    partner_event_source_name_prefix = "aws.partner/salesforce.com/00D000000000000AAA/0YL000000000000AAA"
+    partner_event_source_name_prefix = "aws.partner/salesforce.com/00Dxxxxxxxxxxxxxxx/0YLxxxxxxxxxxxxxxx"
   }
 
   assert {
@@ -85,7 +85,7 @@ run "secure_defaults" {
 
   assert {
     condition = aws_cloudwatch_event_rule.salesforce.event_pattern == jsonencode({
-      source = ["aws.partner/salesforce.com/00D000000000000AAA/0YL000000000000AAA"]
+      source = ["aws.partner/salesforce.com/00Dxxxxxxxxxxxxxxx/0YLxxxxxxxxxxxxxxx"]
     })
     error_message = "The default rule must restrict events to the discovered Salesforce source."
   }
@@ -117,7 +117,7 @@ run "secure_defaults" {
   assert {
     condition = alltrue([
       for alarm in aws_cloudwatch_metric_alarm.eventbridge :
-      alarm.dimensions["EventBusName"] == "aws.partner/salesforce.com/00D000000000000AAA/0YL000000000000AAA" &&
+      alarm.dimensions["EventBusName"] == "aws.partner/salesforce.com/00Dxxxxxxxxxxxxxxx/0YLxxxxxxxxxxxxxxx" &&
       alarm.dimensions["RuleName"] == "sf-event-relay-route" &&
       length(keys(alarm.dimensions)) == 2
     ])
@@ -152,7 +152,7 @@ run "optional_features_and_existing_bus" {
   command = plan
 
   variables {
-    partner_event_source_name_prefix = "aws.partner/salesforce.com/00D000000000000AAA/0YL000000000000AAA"
+    partner_event_source_name_prefix = "aws.partner/salesforce.com/00Dxxxxxxxxxxxxxxx/0YLxxxxxxxxxxxxxxx"
     associate_partner_event_source   = false
     enable_archive                   = false
     enable_schema_discovery          = true
@@ -200,7 +200,7 @@ run "optional_features_and_existing_bus" {
   }
 
   assert {
-    condition     = output.event_bus.arn == "arn:aws:events:us-east-1:123456789012:event-bus/aws.partner/salesforce.com/00D000000000000AAA/0YL000000000000AAA"
+    condition     = output.event_bus.arn == "arn:aws:events:us-east-1:123456789012:event-bus/aws.partner/salesforce.com/00Dxxxxxxxxxxxxxxx/0YLxxxxxxxxxxxxxxx"
     error_message = "Existing-bus mode must derive the standard partner event bus ARN."
   }
 
@@ -224,7 +224,7 @@ run "reject_short_processing_dlq_retention" {
   command = plan
 
   variables {
-    partner_event_source_name_prefix = "aws.partner/salesforce.com/00D000000000000AAA/0YL000000000000AAA"
+    partner_event_source_name_prefix = "aws.partner/salesforce.com/00Dxxxxxxxxxxxxxxx/0YLxxxxxxxxxxxxxxx"
     queue_message_retention_seconds  = 345600
     processing_dlq_retention_seconds = 86400
   }
@@ -236,7 +236,7 @@ run "security_invariants" {
   command = apply
 
   variables {
-    partner_event_source_name_prefix = "aws.partner/salesforce.com/00D000000000000AAA/0YL000000000000AAA"
+    partner_event_source_name_prefix = "aws.partner/salesforce.com/00Dxxxxxxxxxxxxxxx/0YLxxxxxxxxxxxxxxx"
   }
 
   assert {
@@ -326,7 +326,7 @@ run "security_invariants" {
   }
 
   assert {
-    condition     = aws_cloudwatch_event_rule.salesforce.state == "ENABLED" && aws_cloudwatch_event_rule.salesforce.event_bus_name == "aws.partner/salesforce.com/00D000000000000AAA/0YL000000000000AAA"
+    condition     = aws_cloudwatch_event_rule.salesforce.state == "ENABLED" && aws_cloudwatch_event_rule.salesforce.event_bus_name == "aws.partner/salesforce.com/00Dxxxxxxxxxxxxxxx/0YLxxxxxxxxxxxxxxx"
     error_message = "The routing rule must be enabled on the Salesforce partner bus."
   }
 }
@@ -335,7 +335,7 @@ run "reject_invalid_name" {
   command = plan
 
   variables {
-    partner_event_source_name_prefix = "aws.partner/salesforce.com/00D000000000000AAA/0YL000000000000AAA"
+    partner_event_source_name_prefix = "aws.partner/salesforce.com/00Dxxxxxxxxxxxxxxx/0YLxxxxxxxxxxxxxxx"
     name                             = "bad name!"
   }
 
@@ -346,7 +346,7 @@ run "reject_invalid_event_pattern" {
   command = plan
 
   variables {
-    partner_event_source_name_prefix = "aws.partner/salesforce.com/00D000000000000AAA/0YL000000000000AAA"
+    partner_event_source_name_prefix = "aws.partner/salesforce.com/00Dxxxxxxxxxxxxxxx/0YLxxxxxxxxxxxxxxx"
     event_pattern                    = "not-json"
   }
 
@@ -357,7 +357,7 @@ run "reject_non_arn_alarm_action" {
   command = plan
 
   variables {
-    partner_event_source_name_prefix = "aws.partner/salesforce.com/00D000000000000AAA/0YL000000000000AAA"
+    partner_event_source_name_prefix = "aws.partner/salesforce.com/00Dxxxxxxxxxxxxxxx/0YLxxxxxxxxxxxxxxx"
     alarm_actions                    = ["platform-alerts"]
   }
 
