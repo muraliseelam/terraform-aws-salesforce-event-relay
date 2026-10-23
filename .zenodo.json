@@ -1,0 +1,30 @@
+{
+  "upload_type": "software",
+  "title": "terraform-aws-salesforce-event-relay: Salesforce Event Relay on Amazon EventBridge and SQS",
+  "description": "A production-oriented Terraform module that receives Salesforce Platform Events and Change Data Capture events through the native Salesforce Event Relay integration with Amazon EventBridge. It associates a Salesforce partner event source, filters events, delivers them to an encrypted durable SQS queue, preserves failures in separate dead-letter queues, archives events for replay, and provisions operational CloudWatch metrics and alarms.",
+  "creators": [
+    {
+      "name": "Seelam, Murali Mohan Reddy"
+    }
+  ],
+  "license": "Apache-2.0",
+  "access_right": "open",
+  "keywords": [
+    "Salesforce",
+    "Terraform",
+    "AWS",
+    "Amazon EventBridge",
+    "SQS",
+    "Platform Events",
+    "Change Data Capture",
+    "event-driven architecture",
+    "infrastructure as code"
+  ],
+  "related_identifiers": [
+    {
+      "identifier": "https://github.com/muraliseelam/terraform-aws-salesforce-event-relay",
+      "relation": "isSupplementTo",
+      "scheme": "url"
+    }
+  ]
+}

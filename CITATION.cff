@@ -1,0 +1,29 @@
+cff-version: 1.2.0
+message: "If you use terraform-aws-salesforce-event-relay in your work, please cite it using the metadata below."
+title: "terraform-aws-salesforce-event-relay: Salesforce Event Relay on Amazon EventBridge and SQS"
+abstract: >-
+  A production-oriented Terraform module that receives Salesforce Platform Events and Change Data Capture events through the native Salesforce Event Relay integration with Amazon EventBridge. It associates a Salesforce partner event source, filters events, delivers them to an encrypted durable SQS queue, preserves failures in separate dead-letter queues, archives events for replay, and provisions operational CloudWatch metrics and alarms.
+type: software
+authors:
+  - family-names: Seelam
+    given-names: Murali Mohan Reddy
+    # orcid: "https://orcid.org/0000-0000-0000-0000"  # add after you register a free ORCID iD
+version: 0.1.2
+date-released: 2026-09-20
+license: Apache-2.0
+repository-code: "https://github.com/muraliseelam/terraform-aws-salesforce-event-relay"
+url: "https://github.com/muraliseelam/terraform-aws-salesforce-event-relay"
+# identifiers:                       # uncomment and fill in after the first Zenodo archive
+#   - type: doi
+#     value: "10.5281/zenodo.XXXXXXX"
+#     description: "Concept DOI that always resolves to the latest version"
+keywords:
+  - Salesforce
+  - Terraform
+  - AWS
+  - Amazon EventBridge
+  - SQS
+  - Platform Events
+  - Change Data Capture
+  - event-driven architecture
+  - infrastructure as code
